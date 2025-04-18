@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Strava - Track Your Activities</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --primary: #fc5200;
+      --primary-hover: #e34a00;
+      --secondary: #f7f7fa;
+      --text: #242428;
+      --text-light: #6d6d78;
+      --background: #ffffff;
+      --card-bg: #f7f7fa;
+      --border: #dfdfe8;
+      --radius: 0.5rem;
+      --header-height: 72px;
+      --transition: all 0.3s ease;
+    }
+
+    .dark {
+      --primary: #ff7940;
+      --primary-hover: #ff8a56;
+      --secondary: #2d2d32;
+      --text: #f0f0f5;
+      --text-light: #b0b0b8;
+      --background: #1a1a1d;
+      --card-bg: #2d2d32;
+      --border: #444448;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--background);
+      color: var(--text);
+      line-height: 1.6;
+      transition: var(--transition);
+    }
+
+    a {
+      color: var(--text);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    img {
+      max-width: 100%;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius);
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+
+    .btn-outline:hover {
+      background-color: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .section {
+      padding: 5rem 0;
+    }
+
+    .section-heading {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+    }
+
+    .section-subheading {
+      font-size: 1.25rem;
+      color: var(--text-light);
+      margin-bottom: 3rem;
+    }
+
+    /* Navigation bar styling */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: var(--header-height);
+      background-color: var(--background);
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      transition: var(--transition);
+    }
+
+    .navbar-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 100%;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo img, .logo svg {
+      height: 30px;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 1.5rem;
+    }
+
+    .nav-link {
+      position: relative;
+      padding: 0.5rem;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: var(--primary);
+      transition: var(--transition);
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .theme-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.25rem;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem;
+      border-radius: 50%;
+      transition: var(--transition);
+    }
+
+    .theme-toggle:hover {
+      background-color: var(--secondary);
+    }
+
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    /* Hero section styling */
+    .hero {
+      padding-top: calc(var(--header-height) + 5rem);
+      padding-bottom: 5rem;
+      background-color: var(--background);
+    }
+
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+    }
+
+    .hero-text {
+      font-size: 1.25rem;
+      color: var(--text-light);
+      margin-bottom: 2rem;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 3rem;
+    }
+
+    .hero-image {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Features section styling  */
+    .features {
+      background-color: var(--secondary);
+      padding: 5rem 0;
+    }
+
+    .features-container {
+      text-align: center;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .feature-card {
+      background-color: var(--background);
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      transition: var(--transition);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+    }
+
+    .feature-title {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-text {
+      color: var(--text-light);
+    }
+
+    /* Activities section styling */
+    .activities {
+      padding: 5rem 0;
+    }
+
+    .activities-container {
+      text-align: center;
+    }
+
+    .activities-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .activity-card {
+      background-color: var(--card-bg);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      transition: var(--transition);
+    }
+
+    .activity-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .activity-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .activity-content {
+      padding: 1.5rem;
+    }
+
+    .activity-title {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .activity-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      color: var(--text-light);
+      font-size: 0.875rem;
+    }
+
+    .activity-stats {
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+    }
+
+    .stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .stat-value {
+      font-weight: 700;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-light);
+    }
+
+    /* Footer styling  */
+    .footer {
+      background-color: var(--secondary);
+      padding: 4rem 0 2rem;
+    }
+
+    .footer-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .footer-logo img, .footer-logo svg {
+      height: 30px;
+    }
+
+    .footer-text {
+      color: var(--text-light);
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-title {
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-link {
+      margin-bottom: 0.75rem;
+    }
+
+    .footer-link a {
+      color: var(--text-light);
+    }
+
+    .footer-link a:hover {
+      color: var(--primary);
+    }
+
+    .social-links {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .social-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--background);
+      color: var(--text);
+      transition: var(--transition);
+    }
+
+    .social-link:hover {
+      background-color: var(--primary);
+      color: white;
+      transform: translateY(-5px);
+    }
+
+    .copyright {
+      text-align: center;
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-light);
+      font-size: 0.875rem;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.5rem;
+      }
+
+      .nav-links {
+        position: fixed;
+        top: var(--header-height);
+        left: 0;
+        right: 0;
+        background-color: var(--background);
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem;
+        gap: 2rem;
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        transform: translateY(-150%);
+        transition: var(--transition);
+      }
+
+      .nav-links.active {
+        transform: translateY(0);
+      }
+
+      .hamburger {
+        display: block;
+      }
+
+      .section-heading {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar Code -->
+  <header class="navbar">
+    <div class="container navbar-container">
+      <div class="logo">
+        <img src="src/strava_logo.png" alt="Strava Logo">
+      </div>
+
+      <nav>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="#" class="nav-link">Features</a></li>
+          <li><a href="#" class="nav-link">Mobile</a></li>
+          <li><a href="#" class="nav-link">Subscription</a></li>
+          <li><a href="#" class="nav-link">About</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="theme-toggle" id="themeToggle">
+          <i class="fas fa-sun"></i>
+        </button>
+        <a href="#" class="btn btn-outline">Log In</a>
+        <a href="#" class="btn btn-primary">Sign Up</a>
+        <button class="hamburger" id="hamburgerBtn">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section Code -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="hero-title">The #1 app for runners and cyclists</h1>
+        <p class="hero-text">Track your progress, connect with friends, and reach your fitness goals with our community of over 100 million athletes.</p>
+        <div class="hero-cta">
+          <a href="#" class="btn btn-primary">Get Started</a>
+          <a href="#" class="btn btn-outline">Download App</a>
+        </div>
+        <div class="hero-image">
+          <img src="./src/runner_watch.webp" alt="Runner tracking time on watch">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section code-->
+  <section class="features" id="features">
+    <div class="container features-container">
+      <h2 class="section-heading">Train smarter, go further</h2>
+      <p class="section-subheading">Our features help you track, analyze, and share your activities like never before.</p>
+      
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-map-marker-alt"></i>
+          </div>
+          <h3 class="feature-title">Activity Tracking</h3>
+          <p class="feature-text">Record your routes, pace, elevation, and more with our precise GPS tracking.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <h3 class="feature-title">Personal Progress</h3>
+          <p class="feature-text">Analyze your performance and track improvements over time with detailed stats.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-trophy"></i>
+          </div>
+          <h3 class="feature-title">Challenges & Goals</h3>
+          <p class="feature-text">Set personal goals or join challenges to stay motivated and push your limits.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Activities Section code -->
+  <section class="activities">
+    <div class="container activities-container">
+      <h2 class="section-heading">Discover new adventures</h2>
+      <p class="section-subheading">Explore popular routes and activities shared by our global community.</p>
+      
+      <div class="activities-grid">
+        <div class="activity-card">
+          <img src="src/photo1.avif" class="activity-image">
+          <div class="activity-content">
+            <h3 class="activity-title">Morning Trail Run</h3>
+            <div class="activity-meta">
+              <span>Sarah Johnson</span>
+              <span>Today, 8:30 AM</span>
+            </div>
+            <div class="activity-stats">
+              <div class="stat">
+                <span class="stat-value">5.2</span>
+                <span class="stat-label">Miles</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">42:15</span>
+                <span class="stat-label">Time</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">825</span>
+                <span class="stat-label">Elevation</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="activity-card">
+          <img src="src/photo2.avif" class="activity-image">
+          <div class="activity-content">
+            <h3 class="activity-title">Weekend Cycling Adventure</h3>
+            <div class="activity-meta">
+              <span>Michael Chen</span>
+              <span>Yesterday, 2:15 PM</span>
+            </div>
+            <div class="activity-stats">
+              <div class="stat">
+                <span class="stat-value">24.8</span>
+                <span class="stat-label">Miles</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">1:45:30</span>
+                <span class="stat-label">Time</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">1250</span>
+                <span class="stat-label">Elevation</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="activity-card">
+          <img src="src/photo3.avif" class="activity-image">
+          <div class="activity-content">
+            <h3 class="activity-title">Half Marathon Training</h3>
+            <div class="activity-meta">
+              <span>Emma Rodriguez</span>
+              <span>April 15, 6:00 AM</span>
+            </div>
+            <div class="activity-stats">
+              <div class="stat">
+                <span class="stat-value">13.1</span>
+                <span class="stat-label">Miles</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">1:52:40</span>
+                <span class="stat-label">Time</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">320</span>
+                <span class="stat-label">Elevation</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer Code -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-col">
+        <div class="footer-logo">
+          <svg width="100" height="30" viewBox="0 0 107 30" fill="none" xmlns=" ">
+           
+          </svg>
+        </div>
+        <div class="social-links">
+          <a href="#" class="social-link">
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a href="#" class="social-link">
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a href="#" class="social-link">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="#" class="social-link">
+            <i class="fab fa-youtube"></i>
+          </a>
+        </div>
+      </div>
+      
+      <div class="footer-col">
+        <h4 class="footer-title">Company</h4>
+        <ul class="footer-links">
+          <li class="footer-link"><a href="#">About Us</a></li>
+          <li class="footer-link"><a href="#">Careers</a></li>
+          <li class="footer-link"><a href="#">Press</a></li>
+          <li class="footer-link"><a href="#">Blog</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-col">
+        <h4 class="footer-title">Support</h4>
+        <ul class="footer-links">
+          <li class="footer-link"><a href="#">Help Center</a></li>
+          <li class="footer-link"><a href="#">Contact Us</a></li>
+          <li class="footer-link"><a href="#">Privacy Settings</a></li>
+          <li class="footer-link"><a href="#">Terms of Service</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-col">
+        <h4 class="footer-title">Download</h4>
+        <ul class="footer-links">
+          <li class="footer-link"><a href="#">iOS App</a></li>
+          <li class="footer-link"><a href="#">Android App</a></li>
+          <li class="footer-link"><a href="#">Apple Watch</a></li>
+          <li class="footer-link"><a href="#">Garmin Connect</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="copyright">
+      <p>&copy; 2025 Strava Clone. All rights reserved. Replica made by Dhyan :)</p>
+    </div>
+  </footer>
+
+  <script>
+    // Here we are toggling to drak mode
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.body;
+    let isDarkMode = false;
+
+    // Checking for system preference while initially loading
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      body.classList.add('dark');
+      themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+      isDarkMode = true;
+    }
+
+    themeToggle.addEventListener('click', () => {
+      isDarkMode = !isDarkMode;
+      body.classList.toggle('dark');
+      
+      if (isDarkMode) {
+        themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+      } else {
+        themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+      }
+    });
+
+    // Here making it reponsive for Mobile 
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const navLinks = document.getElementById('navLinks');
+
+    hamburgerBtn.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+      
+      if (navLinks.classList.contains('active')) {
+        hamburgerBtn.innerHTML = '<i class="fas fa-times"></i>';
+      } else {
+        hamburgerBtn.innerHTML = '<i class="fas fa-bars"></i>';
+      }
+    });
+
+    const navLinksItems = document.querySelectorAll('.nav-link');
+    navLinksItems.forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('active');
+        hamburgerBtn.innerHTML = '<i class="fas fa-bars"></i>';
+      });
+    });
+
+    // Here adding smooth scrolling
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        
+        const targetId = this.getAttribute('href');
+        if (targetId === '#') return;
+        
+        const targetElement = document.querySelector(targetId);
+        if (targetElement) {
+          targetElement.scrollIntoView({
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
